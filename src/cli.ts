@@ -14,6 +14,13 @@ import { Command } from "commander";
 import { writeFileSync } from "fs";
 import { createCollector } from "./collectors/tweet-collector.js";
 import { createGenerator } from "./generators/best-practices-generator.js";
+import {
+  generateMetaAnalysis,
+  generateMetaAnalysisMarkdown,
+  generateMetaAnalysisJSON,
+  ALL_CONTRIBUTORS,
+  ALL_TIPS,
+} from "./generators/meta-analysis-generator.js";
 
 const program = new Command();
 
@@ -256,6 +263,113 @@ program
 
 Source: https://x.com/bcherny/status/2007179832300581177
 `);
+  });
+
+// Meta-analysis command
+program
+  .command("meta-analysis")
+  .description("Generate meta-analysis synthesizing all contributors' insights")
+  .option("-f, --format <format>", "Output format: markdown, json", "markdown")
+  .option("-o, --output <file>", "Output file path")
+  .action((options) => {
+    const output =
+      options.format === "json" ? generateMetaAnalysisJSON() : generateMetaAnalysisMarkdown();
+
+    const defaultFile =
+      options.format === "json" ? "./META_ANALYSIS.json" : "./META_ANALYSIS.md";
+
+    const outputFile = options.output ?? defaultFile;
+
+    writeFileSync(outputFile, output);
+
+    const analysis = generateMetaAnalysis();
+    console.log(`Meta-analysis generated: ${outputFile}`);
+    console.log(`Contributors: ${analysis.contributors.length}`);
+    console.log(`Total Tips: ${analysis.totalTips}`);
+    console.log(`Insights: ${analysis.insights.length}`);
+    console.log(`\nConsensus Levels:`);
+    const levels = ["unanimous", "strong", "moderate", "emerging"];
+    levels.forEach((level) => {
+      const count = analysis.insights.filter((i) => i.consensusLevel === level).length;
+      console.log(`  ${level}: ${count}`);
+    });
+  });
+
+// Contributors command
+program
+  .command("contributors")
+  .description("List all contributors and their expertise")
+  .action(() => {
+    console.log("\n" + "=".repeat(60));
+    console.log("Claude Code Expert Contributors");
+    console.log("=".repeat(60));
+
+    ALL_CONTRIBUTORS.forEach((c) => {
+      console.log(`\n${c.name} (@${c.handle})`);
+      console.log(`  Role: ${c.role}`);
+      console.log(`  Platform: ${c.platform}`);
+      console.log(`  URL: ${c.url}`);
+      console.log(`  Expertise: ${c.expertise.join(", ")}`);
+    });
+
+    console.log("\n" + "=".repeat(60));
+    console.log(`Total Contributors: ${ALL_CONTRIBUTORS.length}`);
+    console.log(`Total Tips Collected: ${ALL_TIPS.length}`);
+    console.log("=".repeat(60));
+  });
+
+// All tips command
+program
+  .command("all-tips")
+  .description("List all tips from all contributors")
+  .option("-c, --contributor <id>", "Filter by contributor ID")
+  .option("-t, --category <category>", "Filter by category")
+  .action((options) => {
+    let tips = ALL_TIPS;
+
+    if (options.contributor) {
+      tips = tips.filter((t) => t.contributorId === options.contributor);
+    }
+    if (options.category) {
+      tips = tips.filter((t) => t.category === options.category);
+    }
+
+    console.log(`\nShowing ${tips.length} tips:\n`);
+
+    tips.forEach((tip, i) => {
+      const contributor = ALL_CONTRIBUTORS.find((c) => c.id === tip.contributorId);
+      console.log(`[${i + 1}] ${tip.title}`);
+      console.log(`    Contributor: ${contributor?.name ?? tip.contributorId}`);
+      console.log(`    Category: ${tip.category}`);
+      console.log(`    ${tip.description.substring(0, 80)}...`);
+      console.log();
+    });
+  });
+
+// Consensus command
+program
+  .command("consensus")
+  .description("Show practices with unanimous or strong consensus")
+  .action(() => {
+    const analysis = generateMetaAnalysis();
+
+    console.log("\n" + "=".repeat(60));
+    console.log("Highest Consensus Practices");
+    console.log("=".repeat(60));
+
+    const highConsensus = analysis.insights.filter(
+      (i) => i.consensusLevel === "unanimous" || i.consensusLevel === "strong"
+    );
+
+    highConsensus.forEach((insight) => {
+      const icon = insight.consensusLevel === "unanimous" ? "★★★" : "★★";
+      console.log(`\n${icon} ${insight.title}`);
+      console.log(`   Consensus: ${insight.consensusLevel.toUpperCase()}`);
+      console.log(`   Contributors: ${insight.contributors.join(", ")}`);
+      console.log(`   ${insight.description.substring(0, 100)}...`);
+    });
+
+    console.log("\n" + "=".repeat(60));
   });
 
 program.parse();

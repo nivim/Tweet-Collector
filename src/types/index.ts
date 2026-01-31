@@ -64,3 +64,87 @@ export interface GeneratorConfig {
   format: "markdown" | "json";
   includeExamples: boolean;
 }
+
+// ============================================
+// CONTRIBUTOR TYPES
+// ============================================
+
+export interface Contributor {
+  id: string;
+  name: string;
+  handle: string;
+  platform: string;
+  role: string;
+  url: string;
+  expertise: string[];
+}
+
+export interface Tip {
+  id: string;
+  contributorId: string;
+  title: string;
+  category: TipCategory;
+  description: string;
+  tips: string[];
+  example?: CodeExample;
+  source: string;
+}
+
+export type TipCategory =
+  | "customization"
+  | "commands"
+  | "input"
+  | "workflow"
+  | "git"
+  | "context"
+  | "output"
+  | "automation"
+  | "tools"
+  | "history"
+  | "parallel"
+  | "optimization"
+  | "safety"
+  | "architecture"
+  | "testing"
+  | "code-quality"
+  | "claude-md"
+  | "subagents"
+  | "enterprise"
+  | "thinking"
+  | "hooks"
+  | "mcp"
+  | "plan-mode"
+  | "skills"
+  | "shortcuts"
+  | "help"
+  | "sessions"
+  | "monitoring"
+  | "integration"
+  | "advanced"
+  | "philosophy"
+  | "verification";
+
+// ============================================
+// META-ANALYSIS TYPES
+// ============================================
+
+export interface MetaInsight {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  contributors: string[];
+  consensusLevel: "unanimous" | "strong" | "moderate" | "emerging";
+  tips: string[];
+  contradictions?: string[];
+}
+
+export interface MetaAnalysis {
+  title: string;
+  generatedAt: Date;
+  contributors: Contributor[];
+  totalTips: number;
+  insights: MetaInsight[];
+  categoryBreakdown: Record<string, number>;
+  topRecommendations: string[];
+}

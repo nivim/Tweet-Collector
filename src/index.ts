@@ -9,10 +9,30 @@
  * learn best practices for using Claude Code effectively.
  */
 
+// Collectors
 export { TweetCollector, createCollector } from "./collectors/tweet-collector.js";
+
+// Generators
 export { BestPracticesGenerator, createGenerator } from "./generators/best-practices-generator.js";
+export {
+  generateMetaAnalysis,
+  generateMetaAnalysisMarkdown,
+  generateMetaAnalysisJSON,
+  ALL_CONTRIBUTORS,
+  ALL_TIPS,
+} from "./generators/meta-analysis-generator.js";
+
+// Data - Boris Cherny
 export { BORIS_TWEETS, BORIS_THREAD } from "./data/boris-tweets.js";
 export { BEST_PRACTICES, CATEGORIES_INFO } from "./data/best-practices.js";
+
+// Data - Other Contributors
+export { YK_SUGI, YK_SUGI_TIPS } from "./data/yk-sugi-tips.js";
+export { MCKAY_WRIGLEY, MCKAY_WRIGLEY_TIPS } from "./data/mckay-wrigley-tips.js";
+export { SHRIVU_SHANKAR, SHRIVU_SHANKAR_TIPS } from "./data/shrivu-shankar-tips.js";
+export { ADO, ADO_ADVENT_TIPS } from "./data/ado-advent-tips.js";
+
+// Types
 export * from "./types/index.js";
 
 import { createCollector } from "./collectors/tweet-collector.js";
