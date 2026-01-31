@@ -1,0 +1,38 @@
+{
+  "name": "boris-tweet-collector",
+  "version": "1.0.0",
+  "description": "Collect Boris Cherny's tweets about Claude Code and generate best practices",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "boris-collector": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "cli": "tsx src/cli.ts",
+    "collect": "tsx src/cli.ts collect",
+    "generate": "tsx src/cli.ts generate",
+    "format": "prettier --write 'src/**/*.ts'"
+  },
+  "keywords": [
+    "claude-code",
+    "twitter",
+    "best-practices",
+    "boris-cherny",
+    "ai-coding"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "prettier": "^3.4.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
